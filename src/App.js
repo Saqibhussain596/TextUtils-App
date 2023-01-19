@@ -1,52 +1,52 @@
 import "./App.css";
-
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import TextForm from "./components/TextForm";
+import About from "./components/About";
+import Alert from "./components/Alert";
 function App() {
+  const body = document.getElementsByTagName("body");
+  const [theme, setTheme] = useState("");
+  const [alert, setAlert] = useState(null);
+  function changeMode(event) {
+    setTheme(event.target.className);
+    body[0].classList.replace(body[0].className, event.target.className);
+    showAlert(
+      event.target.className.charAt(0).toUpperCase() +
+        event.target.className.slice(1) +
+        " mode enabled"
+    );
+  }
+
+  function showAlert(message, type) {
+    setAlert({
+      msg: message,
+      type: type,
+    });
+    setTimeout(() => {
+      setAlert(null);
+    }, 1000);
+  }
+
   return (
-    <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="/">
-            TextUtils
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="/">
-                  Home
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/">
-                  About
-                </a>
-              </li>
-            </ul>
-            <form className="d-flex" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-success" type="submit">
-                Search
-              </button>
-            </form>
-          </div>
+    <Router>
+      <div>
+        <Navbar
+          title="TextUtils"
+          aboutText="About TextUtils"
+          darkMode={theme}
+          changeTheme={changeMode}
+        />
+        <Alert alert={alert} />
+        <div className="container my-3">
+          <Routes>
+            <Route path="/" element={<TextForm heading="Enter Text Below" />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
         </div>
-      </nav>
-    </>
+      </div>
+    </Router>
   );
 }
 
